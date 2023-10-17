@@ -30,9 +30,13 @@ function initEmulator() {
     displayMemory();
 }
 
+let logEntryNumber = 1; // Start the log count
+
 function log(message) {
     const logDisplay = document.getElementById('logDisplay');
-    logDisplay.innerHTML += `<div>${message}</div>`;
+    const timestamp = new Date().toISOString(); // ISO format: YYYY-MM-DDTHH:MM:SS.sssZ
+    logDisplay.innerHTML += `<div><span class="log-number">${logEntryNumber}.</span> <span class="log-timestamp"></span>${message}</div>`;
+    logEntryNumber++;
 }
 function populateMemory(instruction) {
     // Supported data directives

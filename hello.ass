@@ -34,7 +34,3 @@ skip:
     loop find_maximum  ; Decrease ecx and continue the loop for finding the maximum
 
 end_program:
-    ; The max variable now contains the maximum value of the array.
-    ; Return this value and finish the program
-    mov eax, [max]
-    ret

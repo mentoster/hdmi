@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <title>Assembler Emulator</title>
     <script src="assembler.js"></script>
+<link rel="stylesheet" href="cyberpunk.css">
 </head>
 
 <body onload="initEmulator()">
 
-    <textarea id="codeInput" rows="20" cols="50"></textarea><br>
+    <textarea id="codeInput" rows="20" cols="50"></textarea>
+    
+    <br>
     <button onclick="executeCode()">Execute</button>
     <button onclick="loadCode()">Load Code</button>
-    
+
     <h2>Registers</h2>
     <div id="registerDisplay"></div>
 

@@ -1,0 +1,106 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #1a1a1d;
+    color: #a1a1a3;
+    margin: 0;
+    padding: 20px;
+}
+
+textarea, button, div {
+    box-sizing: border-box;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #272729;
+    border: 2px solid #3f3f41;
+    color: #0dfc8c; /* Neon green text color */
+    font-size: 16px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.3s;
+}
+
+textarea:focus {
+    border-color: #0dfc8c; /* Neon green border color when focused */
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px 5px 0;
+    border: none;
+    background-color: #272729;
+    color: #0dfc8c;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0dfc8c; /* Neon green background on hover */
+    color: #272729; /* Dark text color on hover */
+}
+
+h2 {
+    border-bottom: 2px solid #3f3f41;
+    padding-bottom: 10px;
+    color: #0dfcfc; /* Neon blue color for headers */
+    margin-top: 30px;
+}
+
+div {
+    padding: 10px;
+    background-color: #272729;
+    border: 2px solid #3f3f41;
+    margin-top: 10px;
+    overflow-x: auto;
+}
+
+div[id="logDisplay"]::before,
+div[id="memoryDisplay"]::before,
+div[id="registerDisplay"]::before {
+    content: 'Empty...';
+    color: #a1a1a3;
+    display: block;
+    opacity: 0.7;
+}
+#codeContainer {
+    display: flex;
+    width: fit-content;
+}
+
+.lineNumbers {
+    padding: 10px 5px;
+    color: #0dfc8c;
+    user-select: none;
+    font-size: 16px;
+    line-height: 24px; /* Adjust according to your font-size and preference */
+    background-color: #1a1a1d;
+    border-right: 2px solid #3f3f41;
+}
+#codeInput::selection {
+    background-color: #0dfc8c; /* Neon green */
+    color: #272729; /* Dark text color */
+}
+
+/* Your existing textarea styles */
+#codeInput {
+    /*... your existing styles ...*/
+}
+.log-number {
+    color: #ff0077; /* Neon pink for entry numbers */
+    margin-right: 5px;
+}
+
+.log-timestamp {
+    color: #0dfcfc; /* Neon blue for timestamps */
+    margin-right: 5px;
+    font-size: 80%; /* Making the timestamp a bit smaller for aesthetics */
+    font-family: 'Monaco', 'Courier New', monospace; /* Using a monospace font for uniformity */
+}
+
+/* Ensure the log display has a maximum height and can be scrolled */
+#logDisplay {
+    max-height: 800px; /* Adjust this based on your preference */
+    overflow-y: auto;
+}
