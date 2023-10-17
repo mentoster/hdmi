@@ -33,6 +33,9 @@ function log(message) {
     const logDisplay = document.getElementById('logDisplay');
     logDisplay.innerHTML += `<div>${message}</div>`;
 }
+let labelMap = {};
+
+
 function populateMemory(instruction) {
     // Handle db directive for now
     if (instruction.includes('db')) {
@@ -131,22 +134,21 @@ function executeCode() {
             index++;
         }
     }
-
-
     displayMemory();
     displayRegisters()
 }
-// For now, assume labels point to start of memory (address 0)
-// You might want to extend this to actually map labels to correct memory addresses in a more complex emulator.
+
 function memoryPointerForLabel(label) {
     return 0;
 }
 function findLabelInstructionIndex(label) {
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].trim() === label + ':') {
+            log(`Found label ${label} at index ${i}`);
             return i;
         }
     }
+    log(`Error: Label ${label} not found`);
     return -1;  // not found (shouldn't happen in well-formed code)
 }
 
@@ -156,16 +158,46 @@ function executeInstruction(instruction) {
         let parts = instruction.split(",");
         let dest = parts[0].split(" ")[1].trim();
         let source = parts[1].trim();
+
+
+        // Move byte from memory to register
         if (source.startsWith('byte [')) {
             let memLocation = source.split('[')[1].split(']')[0].trim();
 
             // Check if memLocation is a label (e.g., 'array') or an immediate address
-            if (isNaN(memLocation)) { // if memLocation is not a number
+            if (isNaN(memLocation)) {
                 memLocation = memoryPointerForLabel(memLocation);
             }
 
             registers[dest] = memory[memLocation];
-            log(`Moved value from memory address ${memLocation} to register ${dest}`);
+        }
+        // Move value from register to memory
+        else if (dest.startsWith('[')) {
+            let memLocation = dest.split('[')[1].split(']')[0].trim();
+
+            // Check if memLocation is a label (e.g., 'max') or an immediate address
+            if (isNaN(memLocation)) {
+                memLocation = memoryPointerForLabel(memLocation);
+                log(`Resolved label to memory address: ${memLocation}`);
+            }
+
+            memory[memLocation] = registers[source];
+            log(`Moved value from register ${source} to memory address ${memLocation}`);
+        }
+        // Move value from register to register
+        else if (registers.hasOwnProperty(dest) && registers.hasOwnProperty(source)) {
+            registers[dest] = registers[source];
+        }
+        // Move label (address) to register
+        else if (registers.hasOwnProperty(dest) && memoryPointerForLabel(source) !== undefined) {
+            registers[dest] = memoryPointerForLabel(source);
+        }
+        // Handle immediate values (e.g., mov eax, 4)
+        else if (registers.hasOwnProperty(dest) && !isNaN(source)) {
+            registers[dest] = parseInt(source);
+        }
+        else {
+            log('Error: Invalid mov instruction');
         }
     }
     // TODO: Add other instruction handlers here
@@ -247,7 +279,12 @@ function executeInstruction(instruction) {
     }
     //end_program
     else if (instruction.startsWith('end_program')) {
-        console.log('Close program');
+        log('Program ended');
+        return 'exit';
+    }
+    // no instruction - error
+    else if (instruction.startsWith('')) {
+        log('Error: No instruction');
         return 'exit';
     }
 }
