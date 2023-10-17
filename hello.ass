@@ -1,0 +1,40 @@
+section .data
+    ; Declare an array. The first element is the array size.
+    ; For demonstration, let's consider a random array of 10 elements.
+    array   db 10, 34, 56, 12, 89, 54, 23, 67, 45, 78, 90  ; Here, the array has 11 elements (10 elements + size)
+    max     dd 0  ; Variable to store the maximum value
+
+section .text
+    global main
+
+main:
+    mov ebp, esp
+
+    ; Initialize the pointer to the array and load the array size into ecx
+    mov edx, array
+    movzx ecx, byte [edx]  ; Load the array size into ecx
+    inc edx  ; Move to the next element
+
+    ; Initialize eax with the first element of the array as the assumed maximum
+    movzx eax, byte [edx]  ; Load the first value into eax
+    mov [max], eax  ; Initialize max with the first value
+    inc edx  ; Move to the next element
+
+find_maximum:
+    ; Compare the current element with the maximum value
+    movzx ebx, byte [edx]
+    cmp [max], ebx
+    jnl skip  ; If the current element isn't greater than the maximum, skip to the next element
+
+    ; Update the maximum
+    mov [max], ebx
+
+skip:
+    inc edx  ; Move to the next element
+    loop find_maximum  ; Decrease ecx and continue the loop for finding the maximum
+
+end_program:
+    ; The max variable now contains the maximum value of the array.
+    ; Return this value and finish the program
+    mov eax, [max]
+    ret
