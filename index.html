@@ -5,26 +5,39 @@
     <meta charset="UTF-8">
     <title>Assembler Emulator</title>
     <script src="assembler.js"></script>
-<link rel="stylesheet" href="cyberpunk.css">
+    <script src="loadfile.js"></script>
+    <link rel="stylesheet" href="cyberpunk.css">
 </head>
 
 <body onload="initEmulator()">
+    <div id="page-container">
+        <div id="content-container">
+            <img id="logoImage" src="1.png" alt="Logo">
+            <textarea id="codeInput" rows="20" cols="50"></textarea>
+            <br>
+            <!-- File input to select .ass files -->
+            <label for="fileInput" class="custom-file-input">
+                Загрузить файл
+            </label>
+            <input type="file" id="fileInput" accept=".ass" onchange="loadCodeFromFile()">
+            <br>
+            <button onclick="executeCode()">Запуск</button>
+            <button onclick="loadCode()">Загрузить код из куки</button>
+            <div>Аккумулятор: <span id="batteryDisplay">100</span>%</div>
+            <div>Счетчик: <span id="counterDisplay">0</span></div>
+            <div>Счетчик команд: <span id="commandCounterDisplay">0</span></div>
+            <div>Команда в машинном коде (Machine Code): <span id="commandMachineCodeDisplay"></span></div>
+            <div>Последняя команда (Assembler): <span id="commandAssemblerDisplay"></span></div>
+            <div>Флаги регистров ZF: <span id="ZFDisplay">0</span>, SF: <span id="SFDisplay">0</span>, OF: <span
+                    id="OFDisplay">0</span></div>
 
-    <textarea id="codeInput" rows="20" cols="50"></textarea>
-    
-    <br>
-    <button onclick="executeCode()">Execute</button>
-    <button onclick="loadCode()">Load Code</button>
-
-    <h2>Registers</h2>
-    <div id="registerDisplay"></div>
-
-    <h2>Memory Cells</h2>
-    <div id="memoryDisplay"></div>
-
-    <h2>Log</h2>
-    <div id="logDisplay"></div>
-
+            <div id="registerDisplay"></div>
+            <h2>ОЗУ</h2>
+            <div id="memoryDisplay"></div>
+            <h2>Лог</h2>
+            <div id="logDisplay"></div>
+        </div>
+        </div>
 </body>
 
 </html>

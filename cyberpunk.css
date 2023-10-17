@@ -4,10 +4,55 @@ body {
     color: #a1a1a3;
     margin: 0;
     padding: 20px;
+    background-image: url('assembler.webp');  /* Add the background image */
+    background-size: cover;  /* Make the image cover the entire viewport */
+    background-repeat: no-repeat;  /* Don't repeat the image */
+    background-position: center;  /* Center the image */
+}
+#page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // big padding
+    padding: 10px;
+    backdrop-filter: blur(10px); /* Apply a blur effect to the backdrop */
+    -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+    background-color: rgba(0, 0, 0, 0.25); /* Color to blend with the backdrop */
 }
 
+
+#content-container {
+    width: 800px; /* Adjust this to your desired fixed width */
+    text-align: center; /* Center the content horizontally within the container */
+    padding: 20px;
+    background-color: #1a1a1d;
+    border-radius: 10px; /* Add rounded corners for a modern look */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow for depth */
+}
 textarea, button, div {
     box-sizing: border-box;
+}
+#logoImage {
+    display: block;       /* Block level element */
+    margin: 20px auto;    /* Top and bottom margin, auto left and right for centering */
+    max-width: 100%;      /* Ensure it doesn't exceed its container's width */
+    width: 50%;           /* Adjust this to your desired size */
+    height: auto;         /* This ensures the image maintains its aspect ratio */
+}
+.logo-container {
+    position: relative;
+    display: inline-block;
+}
+
+.logo-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent, black 80%);
+    pointer-events: none;  /* Ensures the overlay doesn't block interactions with the image */
 }
 
 textarea {
@@ -46,6 +91,8 @@ h2 {
     padding-bottom: 10px;
     color: #0dfcfc; /* Neon blue color for headers */
     margin-top: 30px;
+    // left
+    text-align: left;
 }
 
 div {
@@ -54,6 +101,7 @@ div {
     border: 2px solid #3f3f41;
     margin-top: 10px;
     overflow-x: auto;
+    text-align: left;
 }
 
 div[id="logDisplay"]::before,
@@ -90,6 +138,8 @@ div[id="registerDisplay"]::before {
 .log-number {
     color: #ff0077; /* Neon pink for entry numbers */
     margin-right: 5px;
+    // align to left
+    text-align: left;
 }
 
 .log-timestamp {
@@ -102,5 +152,28 @@ div[id="registerDisplay"]::before {
 /* Ensure the log display has a maximum height and can be scrolled */
 #logDisplay {
     max-height: 800px; /* Adjust this based on your preference */
+    // align to left
+    text-align: left;
     overflow-y: auto;
+    overflow-x: hidden;
+}
+/* Cyberpunk style for the file input button */
+#fileInput {
+    display: none; /* Hide the default file input */
+}
+
+.custom-file-input {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #272729;
+    color: #0dfc8c;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px; /* Add rounded corners */
+}
+
+.custom-file-input:hover {
+    background-color: #0dfc8c; /* Neon green background on hover */
+    color: #272729; /* Dark text color on hover */
 }

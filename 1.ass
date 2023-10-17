@@ -1,7 +1,7 @@
 section .data
     ; Declare an array. The first element is the array size.
     ; For demonstration, let's consider a random array of 10 elements.
-    array   db 10, 34, 56, 12, 89, 54, 23, 67, 45, 78, 90  ; Here, the array has 11 elements (10 elements + size)
+    array   db 10, 34, 56, 12, 89, 54, 23, 90, 45, 5, 1; Here, the array has 11 elements (10 elements + size)
     max     dd 0  ; Variable to store the maximum value
 
 section .text
@@ -33,4 +33,4 @@ skip:
     inc edx  ; Move to the next element
     loop find_maximum  ; Decrease ecx and continue the loop for finding the maximum
 
-end_program:
+; mov counter, [max]
