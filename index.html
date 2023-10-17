@@ -9,12 +9,30 @@
 
 <body>
     <h2>Assembler Emulator</h2>
-    <textarea id="inputCode" rows="20" cols="50"></textarea>
+<h3>Input Program</h3>
+<textarea id="inputCode" rows="10" cols="50" placeholder="Enter your assembler code here..."></textarea>
     <button onclick="emulate()">Run Code</button>
+
     <h3>Memory</h3>
     <pre id="memoryOutput"></pre>
-    <h3>Result</h3>
-    <pre id="resultOutput">eax: 0</pre>
+<h3>Registers</h3>
+<pre id="resultOutput">
+eax: 0
+ebx: 0
+ecx: 0
+edx: 0
+ebp: 0
+esp: 0
+eip: 0
+    </pre>
+
+<h3>Command Register</h3>
+<pre id="commandRegister">Command: None</pre>
+
+<h3>Flags</h3>
+<pre id="flagsOutput">ZF: 0 | CF: 0 | OF: 0</pre>
+
     <script src="script.js"></script>
 </body>
+
 </html>
