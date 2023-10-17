@@ -12,17 +12,17 @@ main:
 
     ; Initialize the pointer to the array and load the array size into ecx
     mov edx, array
-    movzx ecx, byte [edx]  ; Load the array size into ecx
+    mov ecx, byte [edx]  ; Load the array size into ecx
     inc edx  ; Move to the next element
 
     ; Initialize eax with the first element of the array as the assumed maximum
-    movzx eax, byte [edx]  ; Load the first value into eax
+    mov eax, byte [edx]  ; Load the first value into eax
     mov [max], eax  ; Initialize max with the first value
     inc edx  ; Move to the next element
 
 find_maximum:
     ; Compare the current element with the maximum value
-    movzx ebx, byte [edx]
+    mov ebx, byte [edx]
     cmp [max], ebx
     jnl skip  ; If the current element isn't greater than the maximum, skip to the next element
 
