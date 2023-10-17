@@ -162,7 +162,7 @@ function executeInstruction(instruction) {
         let parts = instruction.split(",");
         let dest = parts[0].split(" ")[1].trim();
         let source = parts[1].trim();
-
+        log(`Выполнение mov ${dest}, ${source}`);
         // Extract memory location, considering possible displacement
         function extractMemoryLocation(memStr) {
             let memLocation = memStr.split('[')[1].split(']')[0].trim();
@@ -253,11 +253,16 @@ function executeInstruction(instruction) {
     }
     // cmp
     else if (instruction.startsWith('cmp')) {
-        flagRegister.ZF = 0; // clear Zero Flag before comparison
-
         let parts = instruction.split(",");
         let dest = parts[0].split(" ")[1].trim();
         let source = parts[1].trim();
+
+        // Clearing flags before comparison
+        flagRegister.ZF = 0; // clear Zero Flag
+        flagRegister.SF = 0; // clear Sign Flag
+        // flagRegister.OF = 0; // clear Overflow Flag - if you decide to implement it
+
+        // Compare register to memory value
         if (source.startsWith('[')) {
             let memLocation = source.split('[')[1].split(']')[0].trim();
 
@@ -266,26 +271,65 @@ function executeInstruction(instruction) {
                 memLocation = memoryPointerForLabel(memLocation);
             }
 
-            if (registers[dest] === memory[memLocation]) {
+            let result = registers[dest] - memory[memLocation];
+
+            log(`Сравнение регистра ${dest} и адреса ${memLocation}`);
+            if (result === 0) {
                 log(`Регистр ${dest} равен адресу ${memLocation}`);
                 flagRegister.ZF = 1;  // Zero Flag set
 
-            } else if (registers[dest] > memory[memLocation]) {
+            } else if (result > 0) {
                 log(`Регистр ${dest} выше чем адрес  ${memLocation}`);
                 flagRegister.SF = 0;  // Sign Flag cleared
 
             } else {
                 log(`Регистр ${dest} меньше, чем адрес  ${memLocation}`);
                 flagRegister.SF = 1;  // Sign Flag set
-
             }
+
+            // Compare two registers
+        } else if (registers.hasOwnProperty(source)) {
+            let result = registers[dest] - registers[source];
+
+            if (result === 0) {
+                log(`Регистр ${dest} равен регистру ${source}`);
+                flagRegister.ZF = 1;
+
+            } else if (result > 0) {
+                log(`Регистр ${dest} выше чем регистр  ${source}`);
+                flagRegister.SF = 0;
+
+            } else {
+                log(`Регистр ${dest} меньше, чем регистр  ${source}`);
+                flagRegister.SF = 1;
+            }
+
+            // Compare register to immediate value
+        } else if (!isNaN(source)) {
+            let result = registers[dest] - parseInt(source);
+
+            if (result === 0) {
+                log(`Регистр ${dest} равен значению ${source}`);
+                flagRegister.ZF = 1;
+
+            } else if (result > 0) {
+                log(`Регистр ${dest} выше чем значение ${source}`);
+                flagRegister.SF = 0;
+
+            } else {
+                log(`Регистр ${dest} меньше, чем значение ${source}`);
+                flagRegister.SF = 1;
+            }
+        } else {
+            log('Ошибка: неправильная cmp команда');
         }
     }
     else if (instruction.startsWith('jnl')) {
         let label = instruction.split(' ')[1];
-        if (flagRegister.ZF === 1 || flagRegister.SF === 0) {  // If Zero Flag is set or Sign Flag is cleared
-            return findLabelInstructionIndex(label);
-        }
+        log(`Переход к ${label} из-за отрицательного флага`);
+        // log flag changed
+        log(`Переход к ${label} из-за изменения флага`);
+        return findLabelInstructionIndex(label);
     } else if (instruction === 'ret') {
         return 'halt';  // halt the execution
     } else if (instruction.startsWith('loop')) {
