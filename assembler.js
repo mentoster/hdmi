@@ -8,6 +8,7 @@ let registers = {
     ebp: 0,
     esp: 0
 };
+let labelMap = {};
 let lines;
 
 function Clear() {
@@ -33,56 +34,35 @@ function log(message) {
     const logDisplay = document.getElementById('logDisplay');
     logDisplay.innerHTML += `<div>${message}</div>`;
 }
-let labelMap = {};
-
-
 function populateMemory(instruction) {
-    // Handle db directive for now
-    if (instruction.includes('db')) {
-        let parts = instruction.split('db');
-        let variableName = parts[0].trim();
-        let values = parts[1].split(',').map(value => parseInt(value.trim()));
+    // Supported data directives
+    const directives = ['db', 'dd', 'dw', 'dq'];
 
-        for (let value of values) {
-            memory[memoryPointer] = value;
-            log(`Saved value ${value} in memory address ${memoryPointer}`);
-            memoryPointer++;
+    for (let directive of directives) {
+        if (instruction.includes(directive)) {
+            let parts = instruction.split(directive);
+            let variableName = parts[0].trim();  // Extracting the label/variable name
+            let values = parts[1].split(',').map(value => parseInt(value.trim()));
+
+            labelMap[variableName] = memoryPointer;  // Store the memory address for the label
+
+            for (let value of values) {
+                memory[memoryPointer] = value;
+                log(`Saved value ${value} in memory address ${memoryPointer}`);
+                memoryPointer++;
+            }
+            break; // Exit the loop once we've processed the directive
         }
     }
-    // TODO: Handle other data directives like dd, dw, etc.
-    if (instruction.includes('dd')) {
-        let parts = instruction.split('dd');
-        let variableName = parts[0].trim();
-        let values = parts[1].split(',').map(value => parseInt(value.trim()));
+}
 
-        for (let value of values) {
-            memory[memoryPointer] = value;
-            log(`Saved value ${value} in memory address ${memoryPointer}`);
-            memoryPointer++;
-        }
+function memoryPointerForLabel(label) {
+    log(`Looking for label ${label}`);
+    // log if error
+    if (!labelMap.hasOwnProperty(label)) {
+        log(`Error: Label ${label} not found`);
     }
-    if (instruction.includes('dw')) {
-        let parts = instruction.split('dw');
-        let variableName = parts[0].trim();
-        let values = parts[1].split(',').map(value => parseInt(value.trim()));
-
-        for (let value of values) {
-            memory[memoryPointer] = value;
-            log(`Saved value ${value} in memory address ${memoryPointer}`);
-            memoryPointer++;
-        }
-    }
-    if (instruction.includes('dq')) {
-        let parts = instruction.split('dq');
-        let variableName = parts[0].trim();
-        let values = parts[1].split(',').map(value => parseInt(value.trim()));
-
-        for (let value of values) {
-            memory[memoryPointer] = value;
-            log(`Saved value ${value} in memory address ${memoryPointer}`);
-            memoryPointer++;
-        }
-    }
+    return labelMap[label];  // If the label doesn't exist, this will return undefined
 }
 function executeCode() {
     Clear();
@@ -138,9 +118,8 @@ function executeCode() {
     displayRegisters()
 }
 
-function memoryPointerForLabel(label) {
-    return 0;
-}
+
+
 function findLabelInstructionIndex(label) {
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].trim() === label + ':') {
@@ -159,28 +138,29 @@ function executeInstruction(instruction) {
         let dest = parts[0].split(" ")[1].trim();
         let source = parts[1].trim();
 
-
-        // Move byte from memory to register
-        if (source.startsWith('byte [')) {
-            let memLocation = source.split('[')[1].split(']')[0].trim();
-
-            // Check if memLocation is a label (e.g., 'array') or an immediate address
-            if (isNaN(memLocation)) {
+        // Extract memory location, considering possible displacement
+        function extractMemoryLocation(memStr) {
+            let memLocation = memStr.split('[')[1].split(']')[0].trim();
+            let displacement = 0;
+            if (memLocation.includes('+')) {
+                let [base, offset] = memLocation.split('+');
+                memLocation = memoryPointerForLabel(base.trim());
+                displacement = parseInt(offset.trim());
+            } else if (isNaN(memLocation)) {
                 memLocation = memoryPointerForLabel(memLocation);
             }
+            return memLocation + displacement;
+        }
 
+        // Move byte from memory to register
+        if (source.startsWith('byte [') && registers.hasOwnProperty(source.split('[')[1].split(']')[0].trim())) {
+            let regName = source.split('[')[1].split(']')[0].trim();
+            let memLocation = registers[regName];
             registers[dest] = memory[memLocation];
         }
         // Move value from register to memory
         else if (dest.startsWith('[')) {
-            let memLocation = dest.split('[')[1].split(']')[0].trim();
-
-            // Check if memLocation is a label (e.g., 'max') or an immediate address
-            if (isNaN(memLocation)) {
-                memLocation = memoryPointerForLabel(memLocation);
-                log(`Resolved label to memory address: ${memLocation}`);
-            }
-
+            let memLocation = extractMemoryLocation(dest);
             memory[memLocation] = registers[source];
             log(`Moved value from register ${source} to memory address ${memLocation}`);
         }
